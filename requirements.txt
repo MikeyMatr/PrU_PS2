@@ -1,0 +1,6 @@
+django
+djangorestframework
+kafka-python
+pytest-django
+python-dotenv
+channels
