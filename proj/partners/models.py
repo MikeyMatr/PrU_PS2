@@ -14,6 +14,12 @@ class Category(models.Model):
 
 class PartnerOffer(models.Model):
     title = models.CharField(max_length=200, verbose_name="Заголовок")
+    partner_name = models.CharField(max_length=100, verbose_name="Имя партнера")
+    short_description = models.TextField(verbose_name="Краткое описание (в карточке)")
+    full_description = models.TextField(verbose_name="Подробное описание (в модалке)")
+    link = models.URLField(verbose_name="Ссылка на сайт партнера")
+    start_date = models.DateField(verbose_name="Дата начала")
+    end_date = models.DateField(verbose_name="Дата окончания")
     category = models.ForeignKey(
         Category, 
         on_delete=models.CASCADE, 

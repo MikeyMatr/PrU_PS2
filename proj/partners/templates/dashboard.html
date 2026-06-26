@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Партнерские предложения</title>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-gray-800">Скидки от партнеров</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for category in categories %}
+                {% for offer in category.offers.all %}
+                <!-- Карточка предложения -->
+                <div onclick="openModal('modal-{{ offer.id }}')" 
+                     class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 cursor-pointer hover:shadow-md transition">
+                    <img src="{{ offer.image.url }}" class="h-32 w-full object-cover rounded-xl" alt="{{ offer.title }}">
+                    <h3 class="font-bold mt-3 text-lg">{{ offer.title }}</h3>
+                    <p class="text-blue-600 font-medium">{{ offer.count }} предложений</p>
+                </div>
+
+                <!-- Модальное окно (детали) -->
+                <div id="modal-{{ offer.id }}" class="fixed inset-0 hidden z-50 flex items-center justify-center p-4 bg-black bg-opacity-40">
+                    <div class="bg-white rounded-3xl p-6 max-w-lg w-full relative shadow-2xl">
+                        <button onclick="closeModal('modal-{{ offer.id }}')" class="absolute top-4 right-4 text-gray-400 hover:text-black text-2xl">✕</button>
+                        
+                        <h2 class="text-2xl font-bold mb-1">{{ offer.title }}</h2>
+                        <p class="text-gray-500 mb-4">От банка «{{ offer.partner_name }}»</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="font-bold text-gray-800">Как получить</h3>
+                                <p class="text-gray-600 text-sm">{{ offer.full_description }}</p>
+                            </div>
+                            
+                            <div>
+                                <h3 class="font-bold text-gray-800">Срок действия</h3>
+                                <p class="text-gray-600 text-sm">с {{ offer.start_date|date:"d E" }} — {{ offer.end_date|date:"d E" }}</p>
+                            </div>
+                        </div>
+
+                        <a href="{{ offer.link }}" target="_blank" 
+                           class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center py-4 rounded-xl mt-8 font-bold transition">
+                            Хочу карту
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Закрытие при клике на фон (вне окна)
+        window.onclick = function(event) {
+            if (event.target.classList.contains('fixed')) {
+                event.target.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
