@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ufanet_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+
+  wal-listener:
+    image: ihippik/wal-listener:latest
+    volumes:
+      - ./wal-listener.yaml:/etc/wal-listener.yaml
+    depends_on:
+      - db
+      - kafka
+
+  app:
+    build: .
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - kafka
+    env_file: .env
+
+  bot:
+    build: .
+    command: python bot_listener.py
+    volumes:
+      - .:/code
+    depends_on:
+      - kafka
+    env_file: .env
+
+    

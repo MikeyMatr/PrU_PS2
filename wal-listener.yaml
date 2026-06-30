@@ -1,0 +1,15 @@
+database:
+  host: db
+  port: 5432
+  user: user
+  password: password
+  dbname: ufanet_db
+  slot_name: wal_listener_slot # Имя слота репликации
+  publication_name: wal_listener_pub # Имя публикации
+
+kafka:
+  brokers: ["kafka:9092"]
+  topic: "partner_events"
+
+tables:
+  - name: partners_partneroffer # Имя таблицы в Postgres
